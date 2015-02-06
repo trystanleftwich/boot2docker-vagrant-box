@@ -51,7 +51,11 @@ EOF
 chmod +x ${EXTRACT_DIR}/etc/rc.d/vagrant
 
 # Configure boot to add public key
-echo "/etc/rc.d/vagrant" >> ${EXTRACT_DIR}/opt/bootsync.sh
+# Since the initial docker run takes alot longer now (since its creating certs for TLS)
+# If the ssh add is added last you get into a timing issue were Vagrant can't connect to the
+# image because the key hasn't been added to .ssh/auth_keys yet.
+# so the following will stop that issue.
+sed -i 's#/etc/rc.d/docker#/etc/rc.d/vagrant\n/etc/rc.d/docker#g' ${EXTRACT_DIR}/opt/bootscript.sh
 
 #--------------------------------------------------------------------
 # Package
